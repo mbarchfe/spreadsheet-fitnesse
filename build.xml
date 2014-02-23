@@ -1,0 +1,210 @@
+<project name="SpreadsheetFitnesse" default="all" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant">
+
+
+	<property name="antlib.dir" location="antlib" />
+	<property name="lib.dir" location="lib" />
+	<property name="build.dir" location="build" />
+	<property name="classes.dir" location="${build.dir}/classes" />
+	<property name="classes.test.unit.dir" location="${build.dir}/classes/test/unit" />
+	<property name="classes.test.acceptance.dir" location="${build.dir}/classes/test/acceptance" />
+	<property name="dist.dir" location="dist" />
+	<property name="src.dir" location="src" />
+	<property name="src.test.unit.dir" location="test/unit/src" />
+	<property name="src.test.acceptance.dir" location="test/acceptance/src" />
+	<property name="test.results.dir" location="${dist.dir}/test-results" />
+	<property name="standalone.jar" value="${dist.dir}/spreadsheet-fitnesse.jar" />
+	
+
+	<!-- currently relying on features which are not yet in the maven repository -->
+	<property name="fitnesse-standalone.nightly" value="https://cleancoder.ci.cloudbees.com/job/fitnesse/lastSuccessfulBuild/artifact/dist/fitnesse-standalone.jar" />
+	<property name="fitnesse-standalone-nightly.file" value="${lib.dir}/fitnesse-standalone-nightly.jar" />
+
+	<target name="checkFitnesseNightly">
+		<condition property="fitnesse.nightly.available">
+			<available file="${fitnesse-standalone-nightly.file}" />
+		</condition>
+	</target>
+	
+	<target name="clean">
+		<delete dir="${lib.dir}" />
+		<delete dir="${build.dir}" />
+		<delete dir="${dist.dir}" />
+	</target>
+
+	<target name="resolve" depends="ivy-init">
+		<ivy:resolve />
+	</target>
+
+	<target name="retrieve" depends="resolve" description="Copy dependencies to lib/, mainly for Acceptance tests and IDE's">
+		<ivy:retrieve pattern="${lib.dir}/[artifact]-[revision]-source.[ext]" conf="default,test" type="source" />
+		<ivy:retrieve pattern="${lib.dir}/[artifact]-[revision].[ext]" conf="default,test" type="jar" />
+		<ivy:cachepath pathid="testlibs" conf="test" type="jar" />
+
+		<ivy:cachepath pathid="ivylibs" conf="default" type="jar" />
+		<path id="libs">
+			<path refid="ivylibs" />
+			<pathelement path="${fitnesse-standalone-nightly.file}" />
+		</path>
+	</target>
+
+	<target name="getFitnesseNightly" unless="fitnesse.nightly.available">
+		<get dest="${fitnesse-standalone-nightly.file}" src="${fitnesse-standalone.nightly}" />
+	</target>
+
+	<target name="compile" depends="retrieve,checkFitnesseNightly,getFitnesseNightly">
+		<mkdir dir="${classes.dir}" />
+		<javac srcdir="${src.dir}" destdir="${classes.dir}" classpathref="libs" debug="true" source="1.6" target="1.6" includeantruntime="false" />
+	</target>
+
+	<target name="unit-test-compile" depends="compile">
+		<mkdir dir="${classes.test.unit.dir}" />
+
+		<javac srcdir="${src.test.unit.dir}" destdir="${classes.test.unit.dir}" debug="true" source="1.6" target="1.6" includeantruntime="false">
+			<classpath>
+				<!-- <pathelement id="libs"/> -->
+				<pathelement path="${classes.dir}" />
+				<path refid="libs" />
+				<path refid="testlibs" />
+			</classpath>
+		</javac>
+	</target>
+	
+	<target name="acceptance-test-compile" depends="compile,unit-test-compile">
+		<mkdir dir="${classes.test.acceptance.dir}" />
+
+		<javac srcdir="${src.test.acceptance.dir}" destdir="${classes.test.acceptance.dir}" debug="true" source="1.6" target="1.6" includeantruntime="false">
+			<classpath>
+				<!-- <pathelement id="libs"/> -->
+				<pathelement path="${classes.dir}" />
+				<pathelement path="${classes.test.unit.dir}" />
+				<path refid="libs" />
+				<path refid="testlibs" />
+			</classpath>
+		</javac>
+	</target>
+
+	<target name="unit_test" depends="unit-test-compile" description="run the unit tests">
+		<mkdir dir="${test.results.dir}" />
+		<junit forkmode="once" fork="yes" printsummary="no" haltonfailure="yes" haltonerror="yes" dir="${basedir}">
+			<classpath>
+				<pathelement path="${classes.dir}" />
+				<pathelement path="${classes.test.unit.dir}" />
+				<path refid="libs" />
+				<path refid="testlibs" />
+			</classpath>
+			<formatter type="xml" usefile="true" />
+			<formatter type="plain" usefile="false" />
+			<batchtest todir="${test.results.dir}">
+				<fileset dir="${src.test.unit.dir}">
+					<include name="**/*Test.java" />
+				</fileset>
+			</batchtest>
+		</junit>
+	</target>
+	
+	<target name="acceptance_test" depends="acceptance-test-compile" description="run acceptance tests which need to start fitnesse">
+		<mkdir dir="${test.results.dir}" />
+		<junit forkmode="once" fork="yes" printsummary="no" haltonfailure="yes" haltonerror="yes" dir="${basedir}">
+			<classpath>
+				<pathelement path="${classes.dir}" />
+				<pathelement path="${classes.test.unit.dir}" />
+				<pathelement path="${classes.test.acceptance.dir}" />
+				<path refid="libs" />
+				<path refid="testlibs" />
+			</classpath>
+			<formatter type="xml" usefile="true" />
+			<formatter type="plain" usefile="false" />
+			<batchtest todir="${test.results.dir}">
+				<fileset dir="${src.test.acceptance.dir}">
+					<include name="**/*Test.java" />
+				</fileset>
+			</batchtest>
+		</junit>
+	</target>
+
+	<target name="jar" depends="compile">
+		<dirname file="${standalone.jar}" property="standalone.jar.dir"/>
+		<mkdir dir="${standalone.jar.dir}"/>
+		<!-- convert libs path to fileset, TODO: works on linux only -->
+		<pathconvert refid="libs" property="libs.list" pathsep="," dirsep="/">
+			<!-- 
+		        <fileset> will want relative paths, so we need to strip 
+		        the leading /. result: "foo/bar/baz.txt,qux/quux/quuux.txt"
+		    -->
+			<map from="/" to="" />
+		</pathconvert>
+		<echo>Including the following libraries into the standalone jar: ${libs.list}</echo>
+
+		<delete file="${standalone.jar}" />
+		<jar jarfile="${standalone.jar}" basedir="${classes.dir}">
+			<include name="**" />
+			<zipgroupfileset dir="/" includes="${libs.list}" />
+			<manifest>
+				<attribute name="Built-By" value="Spreadsheet Fitnesse" />
+				<attribute name="Main-Class" value="de.markusbarchfeld.spreadsheetfitnesse.RunExcelTestSuite" />
+			</manifest>
+		</jar>
+	</target>
+	
+	<target name="jar_test" depends="jar,acceptance-test-compile" description="Prepare and run the red pencil spec via standalone jar">
+		<property name="workDir" value="${build.dir}/redpencildemo"/>
+		<delete dir="${workDir}"/>
+		<mkdir dir="${workDir}/RedPencilSpec"/>
+		<copy todir="${workDir}/RedPencilSpec" file="test/acceptance/data/RedPencil/RedPencilSpecification.xlsx"/>
+		<!-- include standalone jar because it contains the SLIM Stuff -->
+		<property name="absolute.standalone.jar" location="${standalone.jar}"/>
+		<property name="absolute.redpencilimplementation" location="${classes.test.acceptance.dir}"/>
+		<echo file="${workDir}/RedPencilSpec/suite">!define TEST_SYSTEM {slim}
+!path ${absolute.standalone.jar}
+!path ${absolute.redpencilimplementation}
+!1 Test suite X
+!contents -R2 -g -p -f -h</echo>
+		<java jar="${standalone.jar}" dir="${workDir}" fork="true">
+			<arg line="RedPencilSpec"/>
+		</java>
+		<loadfile srcFile="${workDir}/testresults.html" property="testresults"/>
+		<condition property="is.testresult.ok" value="true">
+			<contains string="${testresults}" substring="16 right"/>
+		</condition>
+		<fail message="Red Pencil demo failed with the produced standalone jar" unless="is.testresult.ok" status="2"/>
+	</target>
+
+	<target name="all" depends="clean,unit_test,acceptance_test,jar_test">
+	</target>
+
+	<!-- The following seciton has been copied from the fitnesse build script -->
+	<!--
+		Dependency management boilerplate
+	  -->
+	<property name="maven.central.url" value="http://repo2.maven.org/maven2" />
+
+	<available file="${antlib.dir}/ivy.jar" type="file" property="have.ivy.jar" />
+	<available file="${antlib.dir}/bcprov.jar" type="file" property="have.bcprov.jar" />
+	<available file="${antlib.dir}/bcpg.jar" type="file" property="have.bcpg.jar" />
+
+	<condition property="ivy.download.not.required">
+		<and>
+			<istrue value="${have.ivy.jar}" />
+			<istrue value="${have.bcprov.jar}" />
+			<istrue value="${have.bcpg.jar}" />
+		</and>
+	</condition>
+
+	<target name="ivy-init" depends="ivy-download">
+		<path id="ivy.class.path">
+			<fileset dir="${antlib.dir}">
+				<include name="*.jar" />
+			</fileset>
+		</path>
+		<taskdef resource="org/apache/ivy/ant/antlib.xml" uri="antlib:org.apache.ivy.ant" classpathref="ivy.class.path" />
+	</target>
+
+	<target name="ivy-download" unless="ivy.download.not.required">
+		<mkdir dir="${antlib.dir}" />
+		<get src="${maven.central.url}/org/apache/ivy/ivy/2.3.0/ivy-2.3.0.jar" dest="${antlib.dir}/ivy.jar" usetimestamp="true" verbose="true" />
+		<!-- The following libs are used for signing artifacts
+		     when deployed to Maven Central.  -->
+		<get src="${maven.central.url}/org/bouncycastle/bcprov-jdk16/1.46/bcprov-jdk16-1.46.jar" dest="${antlib.dir}/bcprov.jar" usetimestamp="true" verbose="true" />
+		<get src="${maven.central.url}/org/bouncycastle/bcpg-jdk16/1.46/bcpg-jdk16-1.46.jar" dest="${antlib.dir}/bcpg.jar" usetimestamp="true" verbose="true" />
+	</target>
+</project>
