@@ -1,0 +1,10 @@
+!define TEST_SYSTEM {slim}
+!path lib/fitnesse-standalone-nightly.jar
+!path build/classes
+!path build/classes/test/acceptance
+!path build/classes/test/unit
+!path bin
+
+
+!1 Test suite X
+!contents -R2 -g -p -f -h

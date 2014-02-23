@@ -1,0 +1,47 @@
+<ivy-module version="2.0">
+	<info organisation="org.spreadsheet-fitnesse" module="spreadsheetfitnesse">
+		<license name="Common Public License version 1.0"
+			url="http://www.opensource.org/licenses/cpl1.0" />
+		<description homepage="https://github.com/mbarchfe/spreadsheet-fitnesse">
+			Specifiy acceptance tests in a spreadsheet and convert and run into fitnesse.
+		</description>
+	</info>
+	
+	<configurations>
+		<conf name="default" visibility="public" />
+		<conf name="test" visibility="public" extends="default" />
+	</configurations>
+	
+ 
+	<dependencies>
+
+		<dependency org="org.apache.poi" name="poi" rev="3.10-FINAL" conf="default" >
+			<artifact name="poi" type="jar" />
+			<artifact name="poi" type="source" ext="jar" />
+		</dependency>
+		
+		<dependency org="org.apache.poi" name="poi-ooxml" rev="3.10-FINAL" conf="default" >
+			<artifact name="poi-ooxml" type="jar" />
+			<artifact name="poi-ooxml" type="source" ext="jar" />
+		</dependency>
+		
+		<dependency org="org.apache.directory.studio" name="org.apache.commons.io" rev="2.4" conf="default">
+  			<artifact name="org.apache.commons.io" type="jar" />
+  			<artifact name="org.apache.commons.io" type="source" ext="jar" />
+		</dependency>
+		
+		<dependency org="org.apache.commons" name="commons-lang3" rev="3.1" conf="default">
+  			<artifact name="commons-lang3" type="jar" />
+  			<artifact name="commons-lang3" type="source" ext="jar" />
+		</dependency>
+		
+		<dependency org="org.apache.httpcomponents" name="httpclient" rev="4.3.2" conf="default">
+  			<artifact name="httpclient" type="jar" />
+  			<artifact name="httpclient" type="source" ext="jar" />
+		</dependency>
+		
+
+		<dependency org="junit" name="junit-dep" rev="4.11" conf="test->default" />
+		
+	</dependencies>
+</ivy-module>
