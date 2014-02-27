@@ -4,10 +4,14 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.File;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import de.markusbarchfeld.spreadsheetfitnesse.CreateMarkupFromExcelFile;
+import de.markusbarchfeld.spreadsheetfitnesse.token.EndOfLine;
+import de.markusbarchfeld.spreadsheetfitnesse.token.RegularCell;
+import de.markusbarchfeld.spreadsheetfitnesse.token.TableCell;
+import de.markusbarchfeld.spreadsheetfitnesse.token.Tokens;
 
 public class CreateMarkupFromExcelTest {
 
@@ -48,7 +52,7 @@ public class CreateMarkupFromExcelTest {
 
     testSheet("Formula", expectedMarkup);
   }
-  
+
   @Test
   public void testUmlaute() throws Exception {
     testSheet("Umlaute", "äöüÄÖÜ\n");
@@ -58,6 +62,16 @@ public class CreateMarkupFromExcelTest {
       throws Exception {
     String actualMarkup = createMarkupFromExcelFile.getWikiMarkup(sheetName);
     assertEquals(expectedMarkup, actualMarkup);
+  }
+
+  @SuppressWarnings("rawtypes")
+  @Test
+  public void testTokenGenerator() throws Exception {
+    Class[] expectedTokens = { EndOfLine.class, RegularCell.class,
+        EndOfLine.class, TableCell.class, RegularCell.class, EndOfLine.class,
+        EndOfLine.class, RegularCell.class, EndOfLine.class };
+    Tokens tokens = createMarkupFromExcelFile.createToken("Token");
+    Assert.assertArrayEquals(expectedTokens, TestUtil.getClasses(tokens.asList()));
   }
 
 }

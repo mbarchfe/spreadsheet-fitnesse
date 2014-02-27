@@ -1,4 +1,4 @@
-package de.markusbarchfeld.spreadsheetfitnesse;
+package de.markusbarchfeld.spreadsheetfitnesse.token;
 
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
@@ -10,75 +10,36 @@ import java.util.Locale;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 
-public class WikiPageContentBuilder {
+public class CellToken {
+  private static Log log = LogFactory.getLog(CellToken.class);
 
-  private static Log log = LogFactory.getLog(WikiPageContentBuilder.class);
-  private boolean writingBordered = false;
-  private boolean isAtRightSideOfTable = false;
-  StringBuilder stringBuilder = new StringBuilder();
+  public CellToken(FormulaEvaluator formulaEvaluator, Cell cell) {
+    super();
+    this.formulaEvaluator = formulaEvaluator;
+    this.cell = cell;
+  }
+
+  private Cell cell;
+
   private FormulaEvaluator formulaEvaluator;
 
-  public WikiPageContentBuilder(FormulaEvaluator createFormulaEvaluator) {
-    this.formulaEvaluator = createFormulaEvaluator;
-
-  }
-
-  public void appendCell(Cell cell) {
-    boolean isBordered = cell.getCellStyle().getBorderLeft() != HSSFCellStyle.BORDER_NONE;
-    if (isBordered) {
-      startBordered();
-    } else {
-      isAtRightSideOfTable = isAtRightSideOfTable || writingBordered;
-      endBordered();
-      writingBordered = false;
-    }
-    if (!isAtRightSideOfTable) {
-      stringBuilder.append(getStringValue(cell));
-    }
-
-    if (isBordered) {
-      stringBuilder.append("|");
-    }
-
-  }
-
-  private void endBordered() {
-    writingBordered = false;
-  }
-
-  private void startBordered() {
-    if (!writingBordered) {
-      stringBuilder.append("|");
-
-    }
-    writingBordered = true;
-
-  }
-
-  public void startNewRow() {
-    endBordered();
-    isAtRightSideOfTable = false;
-    stringBuilder.append("\n");
-  }
-
-  private String getStringValue(Cell cell) {
+  public String getStringValue() {
     String value = "";
     switch (cell.getCellType()) {
     case HSSFCell.CELL_TYPE_STRING:
       value = cell.getStringCellValue();
       break;
     case HSSFCell.CELL_TYPE_NUMERIC:
-      value = getStringValueFromNumeric(cell);
+      value = getStringValueFromNumeric();
       break;
     case HSSFCell.CELL_TYPE_FORMULA:
       if (cell.getCachedFormulaResultType() == HSSFCell.CELL_TYPE_NUMERIC)
-        value = getStringValueFromNumeric(cell);
+        value = getStringValueFromNumeric();
       else
         value = cell.getStringCellValue();
       break;
@@ -89,7 +50,7 @@ public class WikiPageContentBuilder {
     return value;
   }
 
-  private String getStringValueFromNumeric(Cell cell) {
+  private String getStringValueFromNumeric() {
     String value;
     if (DateUtil.isCellDateFormatted(cell)) {
       Locale.setDefault(Locale.GERMANY);
@@ -117,8 +78,4 @@ public class WikiPageContentBuilder {
     return decimalFormat.format(cell.getNumericCellValue());
   }
 
-  @Override
-  public String toString() {
-    return stringBuilder.toString();
-  }
 }

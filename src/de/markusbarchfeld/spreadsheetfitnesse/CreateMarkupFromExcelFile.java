@@ -10,11 +10,16 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
+import de.markusbarchfeld.spreadsheetfitnesse.token.IVisitable;
+import de.markusbarchfeld.spreadsheetfitnesse.token.RightOfTableCleanUpVisitor;
+import de.markusbarchfeld.spreadsheetfitnesse.token.TokenGenerator;
+import de.markusbarchfeld.spreadsheetfitnesse.token.Tokens;
+import de.markusbarchfeld.spreadsheetfitnesse.token.WikiPageMarkupVisitor;
 
 /**
  * Opens Excel File (xls or xlsx) and converts the content into FitNesse Wiki
@@ -33,27 +38,27 @@ public class CreateMarkupFromExcelFile {
     workbook = isXlsx ? new XSSFWorkbook(new FileInputStream(excelFile))
         : new HSSFWorkbook(new FileInputStream(excelFile));
   }
+  
+  public Tokens createToken(String sheetName) {
+    FormulaEvaluator formulaEvaluator = workbook.getCreationHelper().createFormulaEvaluator();
+    Sheet sheet = workbook.getSheetAt(workbook.getSheetIndex(sheetName));
+    TokenGenerator tokenGenerator = new TokenGenerator(sheet, formulaEvaluator);
+    tokenGenerator.generateTokens();
+    return new Tokens(tokenGenerator.getTokens());
+  }
 
   public String getWikiMarkup(String sheetName) {
-    Sheet sheet = workbook.getSheetAt(workbook.getSheetIndex(sheetName));
-
-    WikiPageContentBuilder wikiPageContentBuilder = new WikiPageContentBuilder(
-        workbook.getCreationHelper().createFormulaEvaluator());
-    for (int rowIndex = sheet.getFirstRowNum(); rowIndex <= sheet
-        .getLastRowNum(); rowIndex += 1) {
-      Row row = sheet.getRow(rowIndex);
-      if (row != null && row.getFirstCellNum() >= 0) {
-        for (int colIndex = row.getFirstCellNum(); colIndex <= row
-            .getLastCellNum(); colIndex += 1) {
-          Cell cell = row.getCell(colIndex);
-          if (cell != null) {
-            wikiPageContentBuilder.appendCell(cell);
-          }
-        }
-        wikiPageContentBuilder.startNewRow();
-      }
-    }
-    String pageContent = wikiPageContentBuilder.toString();
+    //Sheet sheet = workbook.getSheetAt(workbook.getSheetIndex(sheetName));
+    // 1. Create Tokens from Cells
+    Tokens tokens = createToken(sheetName);
+    // 2. Filter Tokens
+    RightOfTableCleanUpVisitor cleanUpVisitor = new RightOfTableCleanUpVisitor();
+    cleanUpVisitor.visit(tokens);
+    List<IVisitable> filteredTokens = cleanUpVisitor.getFilteredTokens();
+    // 3. Generate Markup
+    WikiPageMarkupVisitor wikiPageMarkupVisitor = new WikiPageMarkupVisitor();
+    wikiPageMarkupVisitor.visit(new Tokens(filteredTokens));
+    String pageContent = wikiPageMarkupVisitor.toString();
     if (log.isDebugEnabled()) {
       log.debug("Created page content from " + excelFile.getName() + ":");
       log.debug(pageContent);
