@@ -23,7 +23,7 @@ public class RunExcelTestSuite {
     content = content.replace("/files/", "./files/");
     FileUtils.write(new File("testresults.html"), content, "utf-8");
     System.out.println("Results written to testresults.html.");
-    System.exit(0);
+    //System.exit(0);
   }
 
 }

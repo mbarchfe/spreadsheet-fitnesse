@@ -12,6 +12,7 @@ import de.markusbarchfeld.spreadsheetfitnesse.token.RightOfTableCleanUpVisitor;
 import de.markusbarchfeld.spreadsheetfitnesse.token.RegularCell;
 import de.markusbarchfeld.spreadsheetfitnesse.token.TableCell;
 import de.markusbarchfeld.spreadsheetfitnesse.token.Tokens;
+import de.markusbarchfeld.spreadsheetfitnesse.token.TransformerVisitor;
 
 @SuppressWarnings("rawtypes")
 public class RightOfTableCleanUpVisitorTest {
@@ -25,11 +26,16 @@ public class RightOfTableCleanUpVisitorTest {
         EndOfLine.class, TableCell.class, EndOfLine.class, TableCell.class,
         EndOfLine.class };
 
-    RightOfTableCleanUpVisitor leftOfTableCleanUpVisitor = new RightOfTableCleanUpVisitor();
+    actAndAssert(inputTokens, expectedOutputTokens);
+  }
+
+  private void actAndAssert(IVisitable[] inputTokens,
+      Class[] expectedOutputTokens) {
+    TransformerVisitor leftOfTableCleanUpVisitor = new RightOfTableCleanUpVisitor();
     leftOfTableCleanUpVisitor.visit(new Tokens(Arrays.asList(inputTokens)));
 
     Class[] actualTokenClasses = TestUtil.getClasses(leftOfTableCleanUpVisitor
-        .getFilteredTokens());
+        .getTransformedTokens().asList());
     assertArrayEquals(expectedOutputTokens, actualTokenClasses);
   }
   
@@ -41,11 +47,6 @@ public class RightOfTableCleanUpVisitorTest {
     Class[] expectedOutputTokens = { RegularCell.class,
         EndOfLine.class };
 
-    RightOfTableCleanUpVisitor leftOfTableCleanUpVisitor = new RightOfTableCleanUpVisitor();
-    leftOfTableCleanUpVisitor.visit(new Tokens(Arrays.asList(inputTokens)));
-
-    Class[] actualTokenClasses = TestUtil.getClasses(leftOfTableCleanUpVisitor
-        .getFilteredTokens());
-    assertArrayEquals(expectedOutputTokens, actualTokenClasses);
+    actAndAssert(inputTokens, expectedOutputTokens);
   }
 }

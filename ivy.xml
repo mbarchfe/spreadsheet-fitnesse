@@ -42,6 +42,8 @@
 		
 
 		<dependency org="junit" name="junit-dep" rev="4.11" conf="test->default" />
+		<dependency org="org.mockito" name="mockito-core" rev="1.9.5" conf="test->default" />
+
 		
 	</dependencies>
 </ivy-module>

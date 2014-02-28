@@ -15,10 +15,12 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import de.markusbarchfeld.spreadsheetfitnesse.token.CreateTableVisitor;
 import de.markusbarchfeld.spreadsheetfitnesse.token.IVisitable;
 import de.markusbarchfeld.spreadsheetfitnesse.token.RightOfTableCleanUpVisitor;
 import de.markusbarchfeld.spreadsheetfitnesse.token.TokenGenerator;
 import de.markusbarchfeld.spreadsheetfitnesse.token.Tokens;
+import de.markusbarchfeld.spreadsheetfitnesse.token.TransformerVisitor;
 import de.markusbarchfeld.spreadsheetfitnesse.token.WikiPageMarkupVisitor;
 
 /**
@@ -52,12 +54,16 @@ public class CreateMarkupFromExcelFile {
     // 1. Create Tokens from Cells
     Tokens tokens = createToken(sheetName);
     // 2. Filter Tokens
-    RightOfTableCleanUpVisitor cleanUpVisitor = new RightOfTableCleanUpVisitor();
+    TransformerVisitor cleanUpVisitor = new RightOfTableCleanUpVisitor();
     cleanUpVisitor.visit(tokens);
-    List<IVisitable> filteredTokens = cleanUpVisitor.getFilteredTokens();
-    // 3. Generate Markup
+    Tokens filteredTokens = cleanUpVisitor.getTransformedTokens();
+    // 3. Generate Tables
+    CreateTableVisitor createTableVisitor = new CreateTableVisitor();
+    createTableVisitor.visit(filteredTokens);
+    Tokens tokensWithTables = createTableVisitor.getTransformedTokens();
+    // 4. Generate Markup
     WikiPageMarkupVisitor wikiPageMarkupVisitor = new WikiPageMarkupVisitor();
-    wikiPageMarkupVisitor.visit(new Tokens(filteredTokens));
+    wikiPageMarkupVisitor.visit(tokensWithTables);
     String pageContent = wikiPageMarkupVisitor.toString();
     if (log.isDebugEnabled()) {
       log.debug("Created page content from " + excelFile.getName() + ":");

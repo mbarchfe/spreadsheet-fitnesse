@@ -6,4 +6,8 @@ public interface IVisitor {
   public void visitTableCell(TableCell tableCell);
 
   public void visitEndOfLine(EndOfLine endOfLine);
+
+  public void visitTableRow(TableRow tableRow);
+
+  public void visitTable(Table table);
 }
