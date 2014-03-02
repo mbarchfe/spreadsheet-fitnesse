@@ -11,6 +11,7 @@ public class Table implements IVisitable {
 
   @Override
   public void accept(IVisitor visitor) {
+    visitor.visitTableBeforeRows(this);
     for (TableRow tableRow : rows) {
       tableRow.accept(visitor);
     }
@@ -24,6 +25,13 @@ public class Table implements IVisitable {
     }
     rows.get(rows.size() -1 ).cells.add(tableCell);
   }
+  
+  public void add(AddedTableCell tableCell, int i) {
+    if ( i >= rows.size()) {
+      throw new RuntimeException("Can not add cell to table because row " + i + " does not exist");
+    }
+    rows.get(i).cells.add(tableCell);
+  }
 
   public void newRow() {
     isNewRowRequired = true;
@@ -32,5 +40,7 @@ public class Table implements IVisitable {
   public List<? extends Object> getRows() {
     return rows;
   }
+
+
 
 }

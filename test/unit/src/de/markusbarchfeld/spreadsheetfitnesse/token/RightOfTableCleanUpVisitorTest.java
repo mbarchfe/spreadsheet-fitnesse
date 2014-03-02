@@ -1,4 +1,4 @@
-package de.markusbarchfeld.spreadsheetfitnesse;
+package de.markusbarchfeld.spreadsheetfitnesse.token;
 
 import static org.junit.Assert.assertArrayEquals;
 
@@ -6,6 +6,7 @@ import java.util.Arrays;
 
 import org.junit.Test;
 
+import de.markusbarchfeld.spreadsheetfitnesse.TestUtil;
 import de.markusbarchfeld.spreadsheetfitnesse.token.EndOfLine;
 import de.markusbarchfeld.spreadsheetfitnesse.token.IVisitable;
 import de.markusbarchfeld.spreadsheetfitnesse.token.RightOfTableCleanUpVisitor;

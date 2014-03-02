@@ -44,4 +44,10 @@ public class WikiPageMarkupVisitor implements IVisitor {
   public void visitTable(Table table) {
 
   }
+
+  @Override
+  public void visitTableBeforeRows(Table table) {
+    // TODO Auto-generated method stub
+    
+  }
 }

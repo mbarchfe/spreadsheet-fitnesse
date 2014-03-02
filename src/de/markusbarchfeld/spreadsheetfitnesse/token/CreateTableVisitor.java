@@ -3,6 +3,7 @@ package de.markusbarchfeld.spreadsheetfitnesse.token;
 public class CreateTableVisitor extends TransformerVisitor {
 
   private Table table;
+  private boolean tableCellInRow = false;
 
   @Override
   public void visitRegularCell(RegularCell regularCell) {
@@ -12,6 +13,7 @@ public class CreateTableVisitor extends TransformerVisitor {
 
   @Override
   public void visitTableCell(TableCell tableCell) {
+    tableCellInRow = true;
     if (table == null) {
       table = new Table();
       transformedTokens.add(table);
@@ -21,11 +23,16 @@ public class CreateTableVisitor extends TransformerVisitor {
 
   @Override
   public void visitEndOfLine(EndOfLine endOfLine) {
+    // separate Tables
+    if (!tableCellInRow) {
+      table = null;
+    }
     if (table != null) {
       table.newRow();
     } else {
       transformedTokens.add(endOfLine);
     }
+    tableCellInRow = false;
   }
 
 }

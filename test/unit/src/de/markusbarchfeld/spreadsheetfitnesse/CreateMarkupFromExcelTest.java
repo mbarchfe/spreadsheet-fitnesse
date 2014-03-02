@@ -1,6 +1,10 @@
 package de.markusbarchfeld.spreadsheetfitnesse;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.stub;
+import static org.mockito.Mockito.verify;
 
 import java.io.File;
 
@@ -8,11 +12,21 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import de.markusbarchfeld.spreadsheetfitnesse.macrocall.IMacroCall;
+import de.markusbarchfeld.spreadsheetfitnesse.macrocall.KeyValue;
 import de.markusbarchfeld.spreadsheetfitnesse.token.EndOfLine;
 import de.markusbarchfeld.spreadsheetfitnesse.token.RegularCell;
 import de.markusbarchfeld.spreadsheetfitnesse.token.TableCell;
 import de.markusbarchfeld.spreadsheetfitnesse.token.Tokens;
 
+/**
+ * this is something in between a unit test and the integration tests
+ * which need to start fitnesse.
+ * Tests here cover not only the CreateMarkupFromExcel functionality
+ * but also the functianlity from the token generator and visitors.
+ * @author mbarchfe
+ *
+ */
 public class CreateMarkupFromExcelTest {
 
   private CreateMarkupFromExcelFile createMarkupFromExcelFile;
@@ -72,6 +86,30 @@ public class CreateMarkupFromExcelTest {
         EndOfLine.class, RegularCell.class, EndOfLine.class };
     Tokens tokens = createMarkupFromExcelFile.createToken("Token");
     Assert.assertArrayEquals(expectedTokens, TestUtil.getClasses(tokens.asList()));
+  }
+  
+  @Test
+  public void testCallSheetFromExcelAndExtendedMarkup() throws Exception {
+    // reads in excel test data and verifies that ICallSheet was called
+    // and that the markup has been extended with the additional "link called"
+    // column
+
+    String expectedMarkup = "|call sheet|MacroSheet|\n"
+        + "|test case name|param|page called|\n"
+        + "|TestCase1|5|MacroSheetTestCase1|\n" + "\n" + "|otherFixture|\n\nDocumentation\n";
+
+    IMacroCall sheetCallMock = mock(IMacroCall.class);
+
+    CreateMarkupFromExcelFile createMarkupFromExcelFile = new CreateMarkupFromExcelFile(
+        new File(TestUtil.createFullPathToUnitTestData("CallSheet.xlsx")), true /* isXlsx */);
+    CreateMarkupFromExcelFile spiedMarkupCreator = spy(createMarkupFromExcelFile);
+    stub(spiedMarkupCreator.getSheetCall()).toReturn(sheetCallMock);
+
+    String actualMarkup = spiedMarkupCreator.getWikiMarkup("CallSheet");
+
+    KeyValue params = new KeyValue("param", "5");
+    verify(sheetCallMock).call("TestCase1", "MacroSheet", params);
+    assertEquals(expectedMarkup, actualMarkup);
   }
 
 }

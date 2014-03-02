@@ -33,6 +33,10 @@ public abstract class TransformerVisitor implements IVisitor{
   }
 
   @Override
+  public void visitTableBeforeRows(Table table) {
+  }
+  
+  @Override
   public void visitTable(Table table) {
   }
 

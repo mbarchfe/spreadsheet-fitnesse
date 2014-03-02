@@ -16,12 +16,12 @@ public class TableVisitingTest {
 
   @Test
   public void testTableVisiting() throws Exception {
+    // make sure that the visitTableCell and visitTableRow
+    // methods are called while a table is being visited
     TableCell tableCell1 = new TableCell(null, null);
     TableCell tableCell2 = new TableCell(null, null);
     TableCell tableCell3 = new TableCell(null, null);
-    // second part, assertions should probably be on the number of rows and
-    // cells created
-    // not on the visiting
+
     Table table = new Table();
     table.add(tableCell1);
     table.newRow();
@@ -38,6 +38,7 @@ public class TableVisitingTest {
     inOrder.verify(visitor).visitTableCell(tableCell2);
     inOrder.verify(visitor).visitTableCell(tableCell3);
     inOrder.verify(visitor).visitTableRow(any(TableRow.class));
+    inOrder.verify(visitor).visitTable(table);
   }
 
 }

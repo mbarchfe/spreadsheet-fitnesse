@@ -15,6 +15,9 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import de.markusbarchfeld.spreadsheetfitnesse.macrocall.IMacroCall;
+import de.markusbarchfeld.spreadsheetfitnesse.macrocall.KeyValue;
+import de.markusbarchfeld.spreadsheetfitnesse.token.CallMacroTableVisitor;
 import de.markusbarchfeld.spreadsheetfitnesse.token.CreateTableVisitor;
 import de.markusbarchfeld.spreadsheetfitnesse.token.IVisitable;
 import de.markusbarchfeld.spreadsheetfitnesse.token.RightOfTableCleanUpVisitor;
@@ -61,9 +64,13 @@ public class CreateMarkupFromExcelFile {
     CreateTableVisitor createTableVisitor = new CreateTableVisitor();
     createTableVisitor.visit(filteredTokens);
     Tokens tokensWithTables = createTableVisitor.getTransformedTokens();
-    // 4. Generate Markup
+    // 4. Handle Sheet Calls
+    CallMacroTableVisitor callMacroTableVisitor = new CallMacroTableVisitor(getSheetCall());
+    callMacroTableVisitor.visit(tokensWithTables);
+    Tokens tokensWithCallMacros = callMacroTableVisitor.getTransformedTokens();
+    // 5. Generate Markup
     WikiPageMarkupVisitor wikiPageMarkupVisitor = new WikiPageMarkupVisitor();
-    wikiPageMarkupVisitor.visit(tokensWithTables);
+    wikiPageMarkupVisitor.visit(tokensWithCallMacros);
     String pageContent = wikiPageMarkupVisitor.toString();
     if (log.isDebugEnabled()) {
       log.debug("Created page content from " + excelFile.getName() + ":");
@@ -71,6 +78,16 @@ public class CreateMarkupFromExcelFile {
       log.debug("---- end page content ----");
     }
     return pageContent;
+  }
+
+  public IMacroCall getSheetCall() {
+    return new IMacroCall() {
+      
+      @Override
+      public String call(String testCaseName, String sheetName, KeyValue... params) {
+        return null;
+      }
+    };
   }
 
   public List<String> getSheetNames() {

@@ -10,4 +10,6 @@ public interface IVisitor {
   public void visitTableRow(TableRow tableRow);
 
   public void visitTable(Table table);
+
+  public void visitTableBeforeRows(Table table);
 }

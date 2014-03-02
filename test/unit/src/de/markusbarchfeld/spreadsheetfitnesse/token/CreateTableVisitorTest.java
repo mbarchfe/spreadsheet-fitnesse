@@ -1,4 +1,4 @@
-package de.markusbarchfeld.spreadsheetfitnesse;
+package de.markusbarchfeld.spreadsheetfitnesse.token;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
@@ -7,6 +7,7 @@ import java.util.Arrays;
 
 import org.junit.Test;
 
+import de.markusbarchfeld.spreadsheetfitnesse.TestUtil;
 import de.markusbarchfeld.spreadsheetfitnesse.token.CreateTableVisitor;
 import de.markusbarchfeld.spreadsheetfitnesse.token.EndOfLine;
 import de.markusbarchfeld.spreadsheetfitnesse.token.IVisitable;
@@ -18,18 +19,25 @@ public class CreateTableVisitorTest {
 
   @SuppressWarnings("rawtypes")
   @Test
-  public void testTableVisitorAndTableVisiting() throws Exception {
+  public void testOneTableWithTwoRows() throws Exception {
     // assuming that tokens are filtered, i.e. there are no regular cells right
     // of a table
-    TableCell tableCell1 = new TableCell(null, null);
-    TableCell tableCell2 = new TableCell(null, null);
-    TableCell tableCell3 = new TableCell(null, null);
-    IVisitable[] inputTokens = { tableCell1, new EndOfLine(), tableCell2,
-        tableCell3, new EndOfLine() };
+    IVisitable[] inputTokens = { new TableCell(), new EndOfLine(), new TableCell(),
+        new TableCell(), new EndOfLine() };
     Class[] expectedOutputTokens = { Table.class };
     Tokens tokens = actAndAssert(inputTokens, expectedOutputTokens);
     Table table = (Table) tokens.asList().get(0);
     assertEquals(2, table.getRows().size());
+  }
+  
+  @SuppressWarnings("rawtypes")
+  @Test
+  public void testTwoTablesWithOneRow() throws Exception {
+    // tables are separated by at least one end of line
+    IVisitable[] inputTokens = { new TableCell(), new EndOfLine(), new EndOfLine(), new TableCell(),
+        new EndOfLine() };
+    Class[] expectedOutputTokens = { Table.class, EndOfLine.class, Table.class };
+    actAndAssert(inputTokens, expectedOutputTokens);
   }
 
   @SuppressWarnings("rawtypes")
