@@ -84,7 +84,7 @@ public class CreateMarkupFromExcelTest {
     Class[] expectedTokens = { EndOfLine.class, RegularCell.class,
         EndOfLine.class, TableCell.class, RegularCell.class, EndOfLine.class,
         EndOfLine.class, RegularCell.class, EndOfLine.class };
-    Tokens tokens = createMarkupFromExcelFile.createToken("Token");
+    Tokens tokens = createMarkupFromExcelFile.createTokens("Token");
     Assert.assertArrayEquals(expectedTokens, TestUtil.getClasses(tokens.asList()));
   }
   

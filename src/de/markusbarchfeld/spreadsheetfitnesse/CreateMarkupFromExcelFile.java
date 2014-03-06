@@ -35,6 +35,10 @@ public class CreateMarkupFromExcelFile {
 
   private static Log log = LogFactory.getLog(CreateMarkupFromExcelFile.class);
   private Workbook workbook;
+  public Workbook getWorkbook() {
+    return workbook;
+  }
+
   private final File excelFile;
 
   public CreateMarkupFromExcelFile(File excelFile, boolean isXlsx)
@@ -44,7 +48,7 @@ public class CreateMarkupFromExcelFile {
         : new HSSFWorkbook(new FileInputStream(excelFile));
   }
   
-  public Tokens createToken(String sheetName) {
+  public Tokens createTokens(String sheetName) {
     FormulaEvaluator formulaEvaluator = workbook.getCreationHelper().createFormulaEvaluator();
     Sheet sheet = workbook.getSheetAt(workbook.getSheetIndex(sheetName));
     TokenGenerator tokenGenerator = new TokenGenerator(sheet, formulaEvaluator);
@@ -55,7 +59,7 @@ public class CreateMarkupFromExcelFile {
   public String getWikiMarkup(String sheetName) {
     //Sheet sheet = workbook.getSheetAt(workbook.getSheetIndex(sheetName));
     // 1. Create Tokens from Cells
-    Tokens tokens = createToken(sheetName);
+    Tokens tokens = createTokens(sheetName);
     // 2. Filter Tokens
     TransformerVisitor cleanUpVisitor = new RightOfTableCleanUpVisitor();
     cleanUpVisitor.visit(tokens);
@@ -84,8 +88,7 @@ public class CreateMarkupFromExcelFile {
     return new IMacroCall() {
       
       @Override
-      public String call(String testCaseName, String sheetName, KeyValue... params) {
-        return null;
+      public void call(String testCaseName, String sheetName, KeyValue... params) {
       }
     };
   }
