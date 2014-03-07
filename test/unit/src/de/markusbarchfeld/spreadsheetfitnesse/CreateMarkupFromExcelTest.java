@@ -96,7 +96,7 @@ public class CreateMarkupFromExcelTest {
 
     String expectedMarkup = "|call sheet|MacroSheet|\n"
         + "|test case name|param|page called|\n"
-        + "|TestCase1|5|MacroSheetTestCase1|\n" + "\n" + "|otherFixture|\n\nDocumentation\n";
+        + "|TestCase1|5|>TestCase1|\n" + "\n" + "|otherFixture|\n\nDocumentation\n";
 
     IMacroCall sheetCallMock = mock(IMacroCall.class);
 

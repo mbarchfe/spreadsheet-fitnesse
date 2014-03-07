@@ -93,7 +93,7 @@ public class CallMacroTableVisitorTest {
 
     AddedTableCell addedCellForMacroCall = (AddedTableCell) table.rows.get(2).cells
         .get(2);
-    assertEquals(this.sheetName + this.testCaseName,
+    assertEquals(">" + this.testCaseName,
         addedCellForMacroCall.getStringValue());
 
     assertEquals(Table.class, tokenClasses[0]);

@@ -81,6 +81,7 @@ public class CreateMarkupFromExcelFile {
   }
 
   public WikiPage createPageFromTokens(Tokens tokens) {
+    // put on stack to enable nested macro calls
     pageStack.push(new WikiPage());
     String markup = createWikiMarkupFromTokens(tokens);
     WikiPage result = pageStack.pop();
@@ -92,20 +93,20 @@ public class CreateMarkupFromExcelFile {
   }
 
   public String createWikiMarkupFromTokens(Tokens tokens) {
-    // 2. Filter Tokens
+    // 1. Filter Tokens
     TransformerVisitor cleanUpVisitor = new RightOfTableCleanUpVisitor();
     cleanUpVisitor.visit(tokens);
     Tokens filteredTokens = cleanUpVisitor.getTransformedTokens();
-    // 3. Generate Tables
+    // 2. Generate Tables
     CreateTableVisitor createTableVisitor = new CreateTableVisitor();
     createTableVisitor.visit(filteredTokens);
     Tokens tokensWithTables = createTableVisitor.getTransformedTokens();
-    // 4. Handle Sheet Calls
+    // 3. Handle Sheet Calls
     CallMacroTableVisitor callMacroTableVisitor = new CallMacroTableVisitor(
         this);
     callMacroTableVisitor.visit(tokensWithTables);
     Tokens tokensWithCallMacros = callMacroTableVisitor.getTransformedTokens();
-    // 5. Generate Markup
+    // 4. Generate Markup
     WikiPageMarkupVisitor wikiPageMarkupVisitor = new WikiPageMarkupVisitor();
     wikiPageMarkupVisitor.visit(tokensWithCallMacros);
     String pageContent = wikiPageMarkupVisitor.toString();

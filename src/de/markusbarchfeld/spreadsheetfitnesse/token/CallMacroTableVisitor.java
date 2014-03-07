@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.markusbarchfeld.spreadsheetfitnesse.CreateMarkupFromExcelFile;
-import de.markusbarchfeld.spreadsheetfitnesse.WikiPage;
-import de.markusbarchfeld.spreadsheetfitnesse.macrocall.IMacroCall;
 import de.markusbarchfeld.spreadsheetfitnesse.macrocall.KeyValue;
 
 public class CallMacroTableVisitor extends TransformerVisitor {
@@ -69,7 +67,7 @@ public class CallMacroTableVisitor extends TransformerVisitor {
     }
 
     protected void call(int rowNo) {
-      currentTableToken.add(new AddedTableCell(sheetName+testCaseName), rowNo);
+      currentTableToken.add(new AddedTableCell(">"+testCaseName), rowNo);
       createMarkupFromSheet.getSheetCall().call(testCaseName, sheetName, getParams());
       resetRow();
     }

@@ -97,13 +97,15 @@ public class AcceptanceTest {
     // creates a sub page of the Macro call page for every test case
     importExcelIntoFitnesse
         .importFile(createFullPathToAcceptanceTestData("MacroCall.xlsx"));
-    assertEquals("5\n", fitnesseRest.getPageContent("MacroCall.TestCase1"));
-    assertEquals("10\n", fitnesseRest.getPageContent("MacroCall.TestCase2"));
+    assertEquals("5\n", fitnesseRest.getPageContent("MacroCall.CallSheet.TestCase1"));
+    assertEquals("10\n", fitnesseRest.getPageContent("MacroCall.CallSheet.TestCase2"));
+    assertEquals("|There is no cell named 'wrongParam'|\n", fitnesseRest.getPageContent("MacroCall.CallSheetInvalidParameter.TestCaseInvalid"));
   }
 
   @Test
   public void testMacroCallNested() throws Exception {
-    // creates a sub page of the Macro call page for every test case
+    // as opposed to the non-nested call there is only one sheet, therefore the name of the
+    // root page is the file name
     importExcelIntoFitnesse
         .importFile(createFullPathToAcceptanceTestData("MacroCallNested.xlsx"));
     assertEquals("2\n", fitnesseRest.getPageContent("MacroCallNested.TestLevel1.TestLevel2"));
