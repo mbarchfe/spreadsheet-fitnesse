@@ -89,7 +89,23 @@ public class AcceptanceTest {
         .importFile(createFullPathToAcceptanceTestData("MultipleSheets.xls"));
     assertEquals("A\n", fitnesseRest.getPageContent("MultipleSheets.SheetOne"));
     assertEquals("B\n", fitnesseRest.getPageContent("MultipleSheets.SheetTwo"));
-    assertNull(fitnesseRest.getPageContent("MultipleSheets.!ignored"));
+    assertNull(fitnesseRest.getPageContent("MultipleSheets.#ignored"));
+  }
+  
+  @Test
+  public void testMacroCall() throws Exception {
+    // creates a sub page of the Macro call page for every test case
+    importExcelIntoFitnesse
+        .importFile(createFullPathToAcceptanceTestData("MacroCall.xlsx"));
+    assertEquals("5\n", fitnesseRest.getPageContent("MacroCall.TestCase1"));
+    assertEquals("10\n", fitnesseRest.getPageContent("MacroCall.TestCase2"));
   }
 
+  @Test
+  public void testMacroCallNested() throws Exception {
+    // creates a sub page of the Macro call page for every test case
+    importExcelIntoFitnesse
+        .importFile(createFullPathToAcceptanceTestData("MacroCallNested.xlsx"));
+    assertEquals("2\n", fitnesseRest.getPageContent("MacroCallNested.TestLevel1.TestLevel2"));
+  }
 }

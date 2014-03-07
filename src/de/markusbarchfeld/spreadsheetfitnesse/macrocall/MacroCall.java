@@ -1,4 +1,4 @@
-package de.markusbarchfeld.spreadsheetfitnesse.callmacro;
+package de.markusbarchfeld.spreadsheetfitnesse.macrocall;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
@@ -9,8 +9,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellReference;
 
 import de.markusbarchfeld.spreadsheetfitnesse.CreateMarkupFromExcelFile;
-import de.markusbarchfeld.spreadsheetfitnesse.macrocall.IMacroCall;
-import de.markusbarchfeld.spreadsheetfitnesse.macrocall.KeyValue;
+import de.markusbarchfeld.spreadsheetfitnesse.WikiPage;
 import de.markusbarchfeld.spreadsheetfitnesse.token.Tokens;
 
 public class MacroCall implements IMacroCall {
@@ -53,7 +52,14 @@ public class MacroCall implements IMacroCall {
 
   @Override
   public void call(String testCaseName, String sheetName, KeyValue... params) {
-
+    try {
+      Tokens tokens = this.createTokens(testCaseName, sheetName, params);
+      WikiPage page = createMarkupFromExcelFile.createPageFromTokens(tokens);
+      page.setName(testCaseName);
+    } catch (MacroCallException e) {
+      // TODO: create an Exception page
+      // return e.getMessage();
+    }
   }
 
 }

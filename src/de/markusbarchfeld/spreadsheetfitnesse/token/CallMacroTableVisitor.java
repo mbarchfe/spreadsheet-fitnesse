@@ -3,6 +3,8 @@ package de.markusbarchfeld.spreadsheetfitnesse.token;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.markusbarchfeld.spreadsheetfitnesse.CreateMarkupFromExcelFile;
+import de.markusbarchfeld.spreadsheetfitnesse.WikiPage;
 import de.markusbarchfeld.spreadsheetfitnesse.macrocall.IMacroCall;
 import de.markusbarchfeld.spreadsheetfitnesse.macrocall.KeyValue;
 
@@ -68,7 +70,7 @@ public class CallMacroTableVisitor extends TransformerVisitor {
 
     protected void call(int rowNo) {
       currentTableToken.add(new AddedTableCell(sheetName+testCaseName), rowNo);
-      sheetCallMock.call(testCaseName, sheetName, getParams());
+      createMarkupFromSheet.getSheetCall().call(testCaseName, sheetName, getParams());
       resetRow();
     }
     
@@ -93,13 +95,14 @@ public class CallMacroTableVisitor extends TransformerVisitor {
 
   }
 
-  private IMacroCall sheetCallMock;
+  private CreateMarkupFromExcelFile createMarkupFromSheet;
   private NoCallSheetTable sheetCaller = null;
   private int rowNo;
   private Table currentTableToken;
+ 
 
-  public CallMacroTableVisitor(IMacroCall sheetCallMock) {
-    this.sheetCallMock = sheetCallMock;
+  public CallMacroTableVisitor(CreateMarkupFromExcelFile createMarkupFromExcelFile) {
+    this.createMarkupFromSheet = createMarkupFromExcelFile;
   }
 
   @Override

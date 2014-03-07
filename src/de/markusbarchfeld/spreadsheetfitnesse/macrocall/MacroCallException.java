@@ -1,4 +1,4 @@
-package de.markusbarchfeld.spreadsheetfitnesse.callmacro;
+package de.markusbarchfeld.spreadsheetfitnesse.macrocall;
 
 public class MacroCallException extends Exception {
 

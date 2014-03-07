@@ -74,8 +74,8 @@ public class CreateMarkupFromExcelTest {
 
   public void testSheet(String sheetName, String expectedMarkup)
       throws Exception {
-    String actualMarkup = createMarkupFromExcelFile.getWikiMarkup(sheetName);
-    assertEquals(expectedMarkup, actualMarkup);
+    WikiPage actualMarkup = createMarkupFromExcelFile.getWikiMarkup(sheetName);
+    assertEquals(expectedMarkup, actualMarkup.getContent());
   }
 
   @SuppressWarnings("rawtypes")
@@ -105,11 +105,11 @@ public class CreateMarkupFromExcelTest {
     CreateMarkupFromExcelFile spiedMarkupCreator = spy(createMarkupFromExcelFile);
     stub(spiedMarkupCreator.getSheetCall()).toReturn(sheetCallMock);
 
-    String actualMarkup = spiedMarkupCreator.getWikiMarkup("CallSheet");
+    WikiPage actualMarkup = spiedMarkupCreator.getWikiMarkup("CallSheet");
 
     KeyValue params = new KeyValue("param", "5");
     verify(sheetCallMock).call("TestCase1", "MacroSheet", params);
-    assertEquals(expectedMarkup, actualMarkup);
+    assertEquals(expectedMarkup, actualMarkup.getContent());
   }
 
 }

@@ -18,6 +18,8 @@ import org.apache.commons.logging.LogFactory;
  */
 public class ImportExcelIntoFitnesse {
 
+  private static final String IGNORED_SHEET_PREFIX = "#";
+
   private static Log log = LogFactory.getLog(ImportExcelIntoFitnesse.class);
 
   private final FitnesseRest fitnesseRest;
@@ -52,8 +54,7 @@ public class ImportExcelIntoFitnesse {
    */
   private void importFile(String parentPage, File excelFile)
       throws FileNotFoundException, IOException, InvalidFileNameException {
-    CreateMarkupFromExcelFile createMarkupFromExcelFile = new CreateMarkupFromExcelFile(
-        excelFile, isXlsx(excelFile.getName()));
+    CreateMarkupFromExcelFile createMarkupFromExcelFile = new CreateMarkupFromExcelFile(excelFile, isXlsx(excelFile.getName()));
     List<String> sheetNames = createMarkupFromExcelFile.getSheetNames();
     filterIgnoredSheetNames(sheetNames);
     boolean createSubPagePerSheet = sheetNames.size() > 1;
@@ -63,11 +64,20 @@ public class ImportExcelIntoFitnesse {
       parentPage = fitnesseRest.createSuitePage(parentPage, excelFileName);
     }
     for (String sheetName : sheetNames) {
-      String wikiMarkup = createMarkupFromExcelFile.getWikiMarkup(sheetName);
+      WikiPage wikiPage = createMarkupFromExcelFile.getWikiMarkup(sheetName);
       String pageName = createSubPagePerSheet ? sheetName : excelFileName;
       log.info("Writing " + excelFile.getAbsolutePath() + " to wiki page "
           + pageName);
-      fitnesseRest.save(parentPage, pageName, wikiMarkup);
+      fitnesseRest.save(parentPage, pageName, wikiPage.getContent());
+      createSubPages(fitnesseRest.createQualifiedPageName(parentPage, pageName), wikiPage);
+    }
+  }
+
+  private void createSubPages(String parentPage, WikiPage wikiPage) {
+    for (WikiPage nestedPage : wikiPage.getSubPages()) {
+      String pageName = nestedPage.getName();
+      fitnesseRest.save(parentPage, pageName, nestedPage.getContent());
+      createSubPages(fitnesseRest.createQualifiedPageName(parentPage, pageName), nestedPage);
     }
   }
 
@@ -75,7 +85,7 @@ public class ImportExcelIntoFitnesse {
     Iterator<String> iterator = sheetNames.iterator();
     while (iterator.hasNext()) {
       String name = (String) iterator.next();
-      if (name.startsWith("!")) {
+      if (name.startsWith(IGNORED_SHEET_PREFIX)) {
         iterator.remove();
       }
     }

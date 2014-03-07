@@ -11,6 +11,8 @@ import org.junit.Test;
 import de.markusbarchfeld.spreadsheetfitnesse.CreateMarkupFromExcelFile;
 import de.markusbarchfeld.spreadsheetfitnesse.TestUtil;
 import de.markusbarchfeld.spreadsheetfitnesse.macrocall.KeyValue;
+import de.markusbarchfeld.spreadsheetfitnesse.macrocall.MacroCall;
+import de.markusbarchfeld.spreadsheetfitnesse.macrocall.MacroCallException;
 import de.markusbarchfeld.spreadsheetfitnesse.token.RegularCell;
 import de.markusbarchfeld.spreadsheetfitnesse.token.Tokens;
 

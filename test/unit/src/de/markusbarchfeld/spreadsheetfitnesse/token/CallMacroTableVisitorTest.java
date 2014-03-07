@@ -6,10 +6,11 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
-
+import static org.mockito.Mockito.stub;
 import org.junit.Before;
 import org.junit.Test;
 
+import de.markusbarchfeld.spreadsheetfitnesse.CreateMarkupFromExcelFile;
 import de.markusbarchfeld.spreadsheetfitnesse.TestUtil;
 import de.markusbarchfeld.spreadsheetfitnesse.macrocall.IMacroCall;
 import de.markusbarchfeld.spreadsheetfitnesse.macrocall.KeyValue;
@@ -21,6 +22,8 @@ public class CallMacroTableVisitorTest {
   private String paramKey;
   private String paramValue;
   private Table table;
+  private CallMacroTableVisitor callMacroTableVisitor;
+  private IMacroCall sheetCallMock;
 
   @Before
   public void setUp() {
@@ -39,15 +42,18 @@ public class CallMacroTableVisitorTest {
     table.add(tableCellWithContent(testCaseName));
     table.add(tableCellWithContent(paramValue));
     table.newRow();
+    
+    sheetCallMock = mock(IMacroCall.class);
+    CreateMarkupFromExcelFile createMarkupFromExcelFile = mock(CreateMarkupFromExcelFile.class);
+    stub(createMarkupFromExcelFile.getSheetCall()).toReturn(sheetCallMock);
+    callMacroTableVisitor = new CallMacroTableVisitor(
+        createMarkupFromExcelFile);
   }
 
   @Test
   public void testMacroCallInterfaceIsCalled() throws Exception {
 
-    IMacroCall sheetCallMock = mock(IMacroCall.class);
 
-    CallMacroTableVisitor callMacroTableVisitor = new CallMacroTableVisitor(
-        sheetCallMock);
     table.accept(callMacroTableVisitor);
 
     KeyValue params = new KeyValue(paramKey, "5");
@@ -58,15 +64,13 @@ public class CallMacroTableVisitorTest {
   public void testNoTokensAreAddedForRegularTables() throws Exception {
     // testing here that the correct number and type of tokens are added
     // the content is tested from CreateMarkupFromExcelTest
-    IMacroCall sheetCallMock = mock(IMacroCall.class);
 
     table = new Table();
     table.add(tableCellWithContent("some fixture"));
     table.newRow();
     table.add(tableCellWithContent("content"));
     table.newRow();
-    CallMacroTableVisitor callMacroTableVisitor = new CallMacroTableVisitor(
-        sheetCallMock);
+   
     table.accept(callMacroTableVisitor);
 
     assertEquals("1 cell in first row", 1, table.rows.get(0).cells.size());
@@ -78,10 +82,6 @@ public class CallMacroTableVisitorTest {
   @Test
   public void testCellAreAddedForDisplayingLinkToMacro() throws Exception {
 
-    IMacroCall sheetCallMock = mock(IMacroCall.class);
-
-    CallMacroTableVisitor callMacroTableVisitor = new CallMacroTableVisitor(
-        sheetCallMock);
     table.accept(callMacroTableVisitor);
 
     Class[] tokenClasses = TestUtil.getClasses(callMacroTableVisitor

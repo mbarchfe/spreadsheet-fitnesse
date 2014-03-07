@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -16,10 +17,9 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import de.markusbarchfeld.spreadsheetfitnesse.macrocall.IMacroCall;
-import de.markusbarchfeld.spreadsheetfitnesse.macrocall.KeyValue;
+import de.markusbarchfeld.spreadsheetfitnesse.macrocall.MacroCall;
 import de.markusbarchfeld.spreadsheetfitnesse.token.CallMacroTableVisitor;
 import de.markusbarchfeld.spreadsheetfitnesse.token.CreateTableVisitor;
-import de.markusbarchfeld.spreadsheetfitnesse.token.IVisitable;
 import de.markusbarchfeld.spreadsheetfitnesse.token.RightOfTableCleanUpVisitor;
 import de.markusbarchfeld.spreadsheetfitnesse.token.TokenGenerator;
 import de.markusbarchfeld.spreadsheetfitnesse.token.Tokens;
@@ -35,31 +35,63 @@ public class CreateMarkupFromExcelFile {
 
   private static Log log = LogFactory.getLog(CreateMarkupFromExcelFile.class);
   private Workbook workbook;
+
   public Workbook getWorkbook() {
     return workbook;
   }
 
   private final File excelFile;
+  private Stack<WikiPage> pageStack;
 
   public CreateMarkupFromExcelFile(File excelFile, boolean isXlsx)
       throws FileNotFoundException, IOException {
     this.excelFile = excelFile;
+    this.pageStack = new Stack<WikiPage>();
     workbook = isXlsx ? new XSSFWorkbook(new FileInputStream(excelFile))
         : new HSSFWorkbook(new FileInputStream(excelFile));
   }
-  
+
   public Tokens createTokens(String sheetName) {
-    FormulaEvaluator formulaEvaluator = workbook.getCreationHelper().createFormulaEvaluator();
-    Sheet sheet = workbook.getSheetAt(workbook.getSheetIndex(sheetName));
+    FormulaEvaluator formulaEvaluator = workbook.getCreationHelper()
+        .createFormulaEvaluator();
+    Sheet sheet = getSheet(sheetName);
     TokenGenerator tokenGenerator = new TokenGenerator(sheet, formulaEvaluator);
     tokenGenerator.generateTokens();
     return new Tokens(tokenGenerator.getTokens());
   }
 
-  public String getWikiMarkup(String sheetName) {
-    //Sheet sheet = workbook.getSheetAt(workbook.getSheetIndex(sheetName));
-    // 1. Create Tokens from Cells
+  private Sheet getSheet(String sheetName) {
+    int sheetIndex = workbook.getSheetIndex(sheetName);
+    if (sheetIndex == -1) {
+      sheetIndex = workbook.getSheetIndex("#" + sheetName);
+    }
+    if (sheetIndex == -1) {
+      // TODO: test case
+      throw new RuntimeException("There is no sheet '" + sheetName
+          + "' to create markup from");
+    }
+    return workbook.getSheetAt(sheetIndex);
+  }
+
+  public WikiPage getWikiMarkup(String sheetName) {
     Tokens tokens = createTokens(sheetName);
+    WikiPage result = createPageFromTokens(tokens);
+    result.setName(sheetName);
+    return result;
+  }
+
+  public WikiPage createPageFromTokens(Tokens tokens) {
+    pageStack.push(new WikiPage());
+    String markup = createWikiMarkupFromTokens(tokens);
+    WikiPage result = pageStack.pop();
+    result.setContent(markup);
+    if (!pageStack.isEmpty()) {
+      pageStack.peek().addSubPage(result);
+    }
+    return result;
+  }
+
+  public String createWikiMarkupFromTokens(Tokens tokens) {
     // 2. Filter Tokens
     TransformerVisitor cleanUpVisitor = new RightOfTableCleanUpVisitor();
     cleanUpVisitor.visit(tokens);
@@ -69,7 +101,8 @@ public class CreateMarkupFromExcelFile {
     createTableVisitor.visit(filteredTokens);
     Tokens tokensWithTables = createTableVisitor.getTransformedTokens();
     // 4. Handle Sheet Calls
-    CallMacroTableVisitor callMacroTableVisitor = new CallMacroTableVisitor(getSheetCall());
+    CallMacroTableVisitor callMacroTableVisitor = new CallMacroTableVisitor(
+        this);
     callMacroTableVisitor.visit(tokensWithTables);
     Tokens tokensWithCallMacros = callMacroTableVisitor.getTransformedTokens();
     // 5. Generate Markup
@@ -85,12 +118,7 @@ public class CreateMarkupFromExcelFile {
   }
 
   public IMacroCall getSheetCall() {
-    return new IMacroCall() {
-      
-      @Override
-      public void call(String testCaseName, String sheetName, KeyValue... params) {
-      }
-    };
+    return new MacroCall(this);
   }
 
   public List<String> getSheetNames() {
