@@ -80,6 +80,17 @@ public class AcceptanceTest {
     String expectedResult = "16 right, 0 wrong, 0 ignored, 0 exceptions";
     assertTrue(resultsPage.contains(expectedResult));
   }
+  
+  @Test
+  public void testRunRedPencilUsingMacros() throws Exception {
+    importExcelIntoFitnesse
+        .importFolder(createFullPathToAcceptanceTestData("RedPencilUsingMacros"));
+    String resultsPage = fitnesseRest
+        .runSuite("RedPencilUsingMacros.RedPencilSpecification");
+    // TODO there should be only 2 wrong entries here
+    String expectedResult = "3 right, 3 wrong, 0 ignored, 0 exceptions";
+    assertTrue(resultsPage.contains(expectedResult));
+  }
 
   @Test
   public void testMultipleSheets() throws Exception {

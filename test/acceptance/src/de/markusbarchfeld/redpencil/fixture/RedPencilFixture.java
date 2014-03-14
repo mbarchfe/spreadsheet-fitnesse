@@ -41,5 +41,9 @@ public class RedPencilFixture {
     return redPencilStart != null ? SIMPLE_DATE_FORMAT.format(redPencilStart)
         : "None";
   }
+  
+  public void setSpecialOfferFromToWithMaxReductionLimit(String from, String to, int maxReductionLimit) throws Exception {
+    RedPencil.setSpecialOfferFromToWithMaxReductionLimit(convertToDate(from), convertToDate(to), maxReductionLimit); 
+  }
 
 }

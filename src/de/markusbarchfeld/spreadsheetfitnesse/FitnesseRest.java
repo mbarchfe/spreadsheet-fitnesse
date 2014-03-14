@@ -85,16 +85,29 @@ public class FitnesseRest {
   }
 
   public String runSuite(String pageName) {
+    return this.runSuite(pageName, null);
+  }
+  
+  public String runSuite(String pageName, String additionalParameter) {
     try {
-      return execute(new HttpGet(createPageUrl(pageName, "suite")));
+      return execute(new HttpGet(createPageUrl(pageName, "suite", additionalParameter)));
     } catch (InvalidFileNameException e) {
       throw new RuntimeException("Invalid page name '" + pageName + "'");
     }
 
   }
-
+  
   private String createPageUrl(String pageName, String responder) {
-    return url + "/" + pageName + "?responder=" + responder;
+    return this.createPageUrl(pageName, responder, null);
+  }
+
+
+  private String createPageUrl(String pageName, String responder, String additionalParams) {
+    String result = url + "/" + pageName + "?responder=" + responder;
+    if (additionalParams != null) {
+      result += "&" + additionalParams;
+    }
+    return result;
   }
 
   private String execute(HttpUriRequest httprequest)

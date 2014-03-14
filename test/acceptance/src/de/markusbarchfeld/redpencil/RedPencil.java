@@ -10,29 +10,49 @@ import java.util.Date;
  */
 public class RedPencil {
 
+  private final class NoSpecialOfferLimits implements IReductionLimits {
+    @Override
+    public int getMaxReductionLimitAt(Date day) {
+      return MAX_REDUCTION_LIMIT_PERCENT;
+    }
+  }
+
+  static final int MAX_REDUCTION_LIMIT_PERCENT = 50;
   private Date creationDate;
   private BigDecimal price;
   private Date redPhaseStart;
+  private static SpecialOffer specialOffer;
+  private IReductionLimits reductionLimits;
+
+  // special offers are an extension to the original Kata.
+  public static void setSpecialOfferFromToWithMaxReductionLimit(Date from,
+      Date to, int maxReductionLimit) {
+    specialOffer = new SpecialOffer(from, to, maxReductionLimit);
+  }
 
   public RedPencil(Date creationDate, BigDecimal price) {
     this.creationDate = creationDate;
     this.price = price;
     redPhaseStart = null;
+    reductionLimits = specialOffer == null ? new NoSpecialOfferLimits()
+        : specialOffer;
   }
 
   public void setPriceAtTo(Date changeDate, BigDecimal updatedPrice) {
 
     if (isAfterStablePhase(changeDate)
-        && isInBetweenAllowedReduction(updatedPrice)) {
+        && isInBetweenAllowedReduction(updatedPrice, changeDate)) {
       redPhaseStart = changeDate;
     }
 
   }
 
-  private boolean isInBetweenAllowedReduction(BigDecimal updatedPrice) {
+  private boolean isInBetweenAllowedReduction(BigDecimal updatedPrice,
+      Date changeDate) {
     BigDecimal deltaPrice = price.subtract(updatedPrice);
     Double deltaPercent = deltaPrice.doubleValue() / price.doubleValue();
-    return deltaPercent >= 0.0499999f && deltaPercent <= 0.5f;
+    return deltaPercent >= 0.0499999f
+        && deltaPercent <= reductionLimits.getMaxReductionLimitAt(changeDate) / 100d;
   }
 
   private boolean isAfterStablePhase(Date changeDate) {
