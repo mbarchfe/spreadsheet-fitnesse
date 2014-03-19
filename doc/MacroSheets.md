@@ -4,7 +4,7 @@
 
 Often there is need to run tests with the same structure but different values to cover edge cases. Therefore decision tables can be used. However, decision tables need glue code to execute. In an environment where test and development roles are separated, that can be a drawback. 
 
-In addition the Slim table style  offers scenarios. With these the tester can define a certain course of actions based on already implemented building blocks. There is no additional glue code needed. The scenario can be parameterized and called from a decision table. This is good. However, the parameterization needs its own syntax and parameter values can only be used fixed. There are no calculations possible with these parameter values.
+In addition the SliM table style offers scenarios. With these the tester can define a certain course of actions based on already implemented building blocks. There is no additional glue code needed. The scenario can be parameterized and called from a decision table. This is good. However, the parameterization needs its own syntax and parameter values can only be used fixed. There are no calculations possible with these parameter values.
 
 Within a spreadsheet, there are advanced possibilities. Parameterization is possible using the built-in spreadsheet functionality and parameters can be used like any other cell content in formulas. Here I want to describe the way how parameterisation of spreadsheets is currently implemented in this library.
 
@@ -40,7 +40,7 @@ The following is a screenshot of the sheet named *ReductionLimit*, which specifi
 
 ### Parameterizing the Test
 
-Now, lets parameterize the sheet in order to specifiy the new requirement. At first, make sure that constants are defined in named cells.
+Now, lets parameterize the sheet in order to specify the new requirement. At first, make sure that constants are defined in named cells.
 
 ![](parameterized_named_cells.png)
 
@@ -65,4 +65,4 @@ One of the passing and the failing test for the first day of the special offer p
 ![](results_parameterized_passed.png)
 ![](results_parameterized_failed.png)
 
-As expected the tests with the increased limits are failing. Now it is time to implement them.
+As expected the tests with the increased limits are failing. Now it is time to implement the special offer feature.
