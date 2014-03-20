@@ -60,7 +60,7 @@ BUILD SUCCESSFUL
 Total time: 1 minute 0 seconds
 ```
 
-#### HelloWorld.xmlx
+#### HelloWorld.xlsx
 
 ```
 sh$ mkdir $HOME/fit-for-me
