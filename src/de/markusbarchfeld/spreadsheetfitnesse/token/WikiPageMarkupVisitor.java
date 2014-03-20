@@ -5,6 +5,7 @@ public class WikiPageMarkupVisitor implements IVisitor {
   // private static Log log = LogFactory.getLog(WikiPageMarkupVisitor.class);
 
   private static final String Table_Cell_Separator = "|";
+  private int cellNoInLine=0;
 
   private StringBuilder stringBuilder = new StringBuilder();
 
@@ -15,6 +16,10 @@ public class WikiPageMarkupVisitor implements IVisitor {
 
   @Override
   public void visitRegularCell(RegularCell regularCell) {
+    cellNoInLine += 1;
+    if (cellNoInLine>1)  {
+      stringBuilder.append(" ");
+    }
     stringBuilder.append(regularCell.getStringValue());
   }
 
@@ -27,6 +32,7 @@ public class WikiPageMarkupVisitor implements IVisitor {
   @Override
   public void visitEndOfLine(EndOfLine endOfLine) {
     stringBuilder.append("\n");
+    cellNoInLine = 0;
   }
 
   public void visit(Tokens tokens) {

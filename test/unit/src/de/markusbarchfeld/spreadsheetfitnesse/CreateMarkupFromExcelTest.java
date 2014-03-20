@@ -48,6 +48,12 @@ public class CreateMarkupFromExcelTest {
 
     testSheet("Date", expectedMarkup);
   }
+  
+  @Test
+  public void testTwoCellsSepartedBySpace() throws Exception {
+    String expectedMarkup = "cell1 cell2\n";
+    testSheet("TwoCellsSepartedBySpace", expectedMarkup);
+  }
 
   @Test
   public void testNumber() throws Exception {
