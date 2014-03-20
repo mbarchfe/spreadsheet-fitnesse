@@ -118,9 +118,7 @@ public class AcceptanceTest {
     // as opposed to the non-nested call there is only one sheet, therefore the name of the
     // root page is the file name
     importExcelIntoFitnesse
-        .importFile("test/sample/HelloWorld.xlsx");
+        .importFile(createFullPathToAcceptanceTestData("MacroCallNested.xlsx"));
     assertEquals("2\n", fitnesseRest.getPageContent("MacroCallNested.TestLevel1.TestLevel2"));
   }
-  
-  
 }
