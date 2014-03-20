@@ -25,11 +25,11 @@ Therefore, when a project decides to specify in spreadsheets a guideline should 
 
 ### Installation
 
-## Prerequisites
+#### Prerequisites
 
 Ant and java 6 need to be available from command line.
 
-## Compile and Run Tests
+#### Compile and Run Tests
 
 
 ```
@@ -60,15 +60,15 @@ BUILD SUCCESSFUL
 Total time: 1 minute 0 seconds
 ```
 
-## HelloWorld.xmlx
+#### HelloWorld.xmlx
 
 ```
-mkdir $HOME/fit-for-me
-cd $HOME/fit-for-me
-mkdir FitSpreadsheets
-cp ../spreadsheet-fitnesse/test/samples/HelloWorld.xmlx FitSpreadsheets
-echo '!path ../spreadsheet-fitnesse/dist/spreadsheet-fitnesse.jar' > FitSpreadsheets/suite
-java -jar ../spreadsheet-fitnesse/dist/spreadsheet-fitnesse.jar FitSpreadsheets
+sh$ mkdir $HOME/fit-for-me
+sh$ cd $HOME/fit-for-me
+sh$ mkdir FitSpreadsheets
+sh$ cp ../spreadsheet-fitnesse/test/samples/HelloWorld.xlsx FitSpreadsheets
+sh$ echo '!path ../spreadsheet-fitnesse/dist/spreadsheet-fitnesse.jar' > FitSpreadsheets/suite
+sh$ java -jar ../spreadsheet-fitnesse/dist/spreadsheet-fitnesse.jar FitSpreadsheets
 ...
 Results written to testresults.html.
 ```
