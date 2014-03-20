@@ -7,9 +7,12 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.xssf.usermodel.XSSFCellStyle;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTXf;
 
 public class TokenGenerator {
 
@@ -24,6 +27,15 @@ public class TokenGenerator {
   }
 
   protected boolean isBordered(Cell cell) {
+    CellStyle cellStyle = cell.getCellStyle();
+    if (cellStyle instanceof XSSFCellStyle) {
+      // a very first guess at how to check for styles instead of borders
+      // currently only tested from the acceptance test for RedPencilUsingMacros
+      // basic unit tests needed
+      XSSFCellStyle xssfCellStyle = (XSSFCellStyle) cellStyle;
+      CTXf coreXf = xssfCellStyle.getCoreXf();
+      return coreXf.getBorderId() == 1;
+    }
     return cell.getCellStyle().getBorderLeft() != HSSFCellStyle.BORDER_NONE;
   }
 
