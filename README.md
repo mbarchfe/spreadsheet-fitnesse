@@ -22,3 +22,53 @@ But there are disadvantages, too:
 * Test cases might become over-sophisticated. With the usage of variables and formulas the area of specification by example might be left and some kind of prototyping with spreadsheet might happen.
 
 Therefore, when a project decides to specify in spreadsheets a guideline should also be developed on what features should be used or not.
+
+### Installation
+
+## Prerequisites
+
+Ant and java 6 need to be available from command line.
+
+## Compile and Run Tests
+
+
+```
+sh$ cd $HOME
+sh$ git clone https://github.com/mbarchfe/spreadsheet-fitnesse.git
+sh$ cd spreadsheet-fitnesse/
+sh$ ant
+...
+ivy-download:
+...
+getFitnesseNightly:
+...
+compile:
+...
+unit-test-compile:
+...
+unit_test:
+...
+acceptance_test:
+...
+jar:
+...
+      [jar] Building jar: /private/tmp/spreadsheet-fitnesse/dist/spreadsheet-fitnesse.jar
+...
+jar_test:
+...
+BUILD SUCCESSFUL
+Total time: 1 minute 0 seconds
+```
+
+## HelloWorld.xmlx
+
+```
+mkdir $HOME/fit-for-me
+cd $HOME/fit-for-me
+mkdir FitSpreadsheets
+cp ../spreadsheet-fitnesse/test/samples/HelloWorld.xmlx FitSpreadsheets
+echo '!path ../spreadsheet-fitnesse/dist/spreadsheet-fitnesse.jar' > FitSpreadsheets/suite
+java -jar ../spreadsheet-fitnesse/dist/spreadsheet-fitnesse.jar FitSpreadsheets
+...
+Results written to testresults.html.
+```
