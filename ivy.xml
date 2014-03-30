@@ -20,9 +20,16 @@
 			<artifact name="poi" type="source" ext="jar" />
 		</dependency>
 		
+		<!-- 
 		<dependency org="org.apache.poi" name="poi-ooxml" rev="3.10-FINAL" conf="default" >
 			<artifact name="poi-ooxml" type="jar" />
 			<artifact name="poi-ooxml" type="source" ext="jar" />
+		</dependency>
+		 -->
+		
+		<dependency org="org.apache.poi" name="ooxml-schemas" rev="1.1" conf="default" >
+			<artifact name="ooxml-schemas" type="jar" />
+			<artifact name="ooxml-schemas" type="source" ext="jar" />
 		</dependency>
 		
 		<dependency org="org.apache.directory.studio" name="org.apache.commons.io" rev="2.4" conf="default">
