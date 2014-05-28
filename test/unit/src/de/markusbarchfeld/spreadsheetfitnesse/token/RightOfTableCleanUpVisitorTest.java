@@ -21,8 +21,8 @@ public class RightOfTableCleanUpVisitorTest {
   @Test
   public void testFilteredTokens() throws Exception {
     // visitor removes regular cells at the right side of a table cell
-    IVisitable[] inputTokens = { new EndOfLine(), new TableCell(null, null), new RegularCell(null, null),
-        new EndOfLine(), new TableCell(null, null), new EndOfLine() };
+    IVisitable[] inputTokens = { new EndOfLine(), new TableCell(null), new RegularCell(null),
+        new EndOfLine(), new TableCell(null), new EndOfLine() };
     Class[] expectedOutputTokens = { 
         EndOfLine.class, TableCell.class, EndOfLine.class, TableCell.class,
         EndOfLine.class };
@@ -43,7 +43,7 @@ public class RightOfTableCleanUpVisitorTest {
   @Test
   public void testNoFilteredTokens() throws Exception {
     // visitor does not remove regular cells which are not at the right side of a table cell
-    IVisitable[] inputTokens = { new RegularCell(null, null),
+    IVisitable[] inputTokens = { new RegularCell(null),
         new EndOfLine() };
     Class[] expectedOutputTokens = { RegularCell.class,
         EndOfLine.class };

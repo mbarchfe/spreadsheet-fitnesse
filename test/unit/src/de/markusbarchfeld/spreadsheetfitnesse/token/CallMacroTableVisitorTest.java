@@ -102,7 +102,7 @@ public class CallMacroTableVisitorTest {
   }
 
   private TableCell tableCellWithContent(String returnContent) {
-    TableCell result = spy(new TableCell(null, null));
+    TableCell result = spy(new TableCell(null));
     doReturn(returnContent).when(result).getStringValue();
     return result;
   }

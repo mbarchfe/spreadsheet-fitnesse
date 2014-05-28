@@ -1,17 +1,16 @@
 package de.markusbarchfeld.spreadsheetfitnesse.token;
 
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.FormulaEvaluator;
+import de.markusbarchfeld.spreadsheetfitnesse.sources.ICell;
 
 public class TableCell extends CellToken implements IVisitable  {
 
   // for testing purposes only
   protected TableCell() {
-    this(null, null);
+    this(null);
   }
   
-  public TableCell(FormulaEvaluator formulaEvaluator, Cell cell)  {
-    super(formulaEvaluator, cell);
+  public TableCell(ICell cell)  {
+    super(cell);
   }
 
   @Override

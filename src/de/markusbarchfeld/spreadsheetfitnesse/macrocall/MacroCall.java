@@ -17,6 +17,7 @@ import org.apache.poi.ss.util.CellReference;
 
 import de.markusbarchfeld.spreadsheetfitnesse.CreateMarkupFromExcelFile;
 import de.markusbarchfeld.spreadsheetfitnesse.WikiPage;
+import de.markusbarchfeld.spreadsheetfitnesse.sources.PoiCell;
 import de.markusbarchfeld.spreadsheetfitnesse.token.AddedTableCell;
 import de.markusbarchfeld.spreadsheetfitnesse.token.CellToken;
 import de.markusbarchfeld.spreadsheetfitnesse.token.IVisitable;
@@ -42,14 +43,14 @@ public class MacroCall implements IMacroCall {
       if (cell.getCellType() == HSSFCell.CELL_TYPE_NUMERIC) {
         if (DateUtil.isCellDateFormatted(cell)) {
           try {
-            Date date = CellToken.DATE_FORMAT.parse(keyValue.getValue());
+            Date date = PoiCell.DATE_FORMAT.parse(keyValue.getValue());
             cell.setCellValue(date);
           } catch (ParseException e) {
             throw new RuntimeException(e);
           }
         } else {
           try {
-            Number number = CellToken.getDecimalFormat().parse(keyValue.getValue());
+            Number number = PoiCell.getDecimalFormat().parse(keyValue.getValue());
             cell.setCellValue(number.doubleValue());
           } catch (ParseException nfe) {
             cell.setCellValue(keyValue.getValue());

@@ -6,5 +6,10 @@ public class EndOfLine implements IVisitable {
   public void accept(IVisitor visitor) {
     visitor.visitEndOfLine(this);
   }
+  
+  @Override
+  public String toString() {
+    return EndOfLine.class.getSimpleName();
+  }
 
 }

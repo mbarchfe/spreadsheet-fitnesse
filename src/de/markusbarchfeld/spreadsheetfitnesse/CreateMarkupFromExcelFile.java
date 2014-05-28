@@ -14,10 +14,12 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import de.markusbarchfeld.spreadsheetfitnesse.macrocall.IMacroCall;
 import de.markusbarchfeld.spreadsheetfitnesse.macrocall.MacroCall;
+import de.markusbarchfeld.spreadsheetfitnesse.sources.PoiSource;
 import de.markusbarchfeld.spreadsheetfitnesse.token.CallMacroTableVisitor;
 import de.markusbarchfeld.spreadsheetfitnesse.token.CreateTableVisitor;
 import de.markusbarchfeld.spreadsheetfitnesse.token.RightOfTableCleanUpVisitor;
@@ -55,7 +57,8 @@ public class CreateMarkupFromExcelFile {
     FormulaEvaluator formulaEvaluator = workbook.getCreationHelper()
         .createFormulaEvaluator();
     Sheet sheet = getSheet(sheetName);
-    TokenGenerator tokenGenerator = new TokenGenerator(sheet, formulaEvaluator);
+    TokenGenerator tokenGenerator = new TokenGenerator(new PoiSource(sheet,
+        formulaEvaluator));
     tokenGenerator.generateTokens();
     return new Tokens(tokenGenerator.getTokens());
   }

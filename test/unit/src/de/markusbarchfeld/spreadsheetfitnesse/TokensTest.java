@@ -15,7 +15,7 @@ public class TokensTest {
 
   @Test
   public void testOneOfTwoTrailingEndOfLinesArePurged() {
-    IVisitable[] inputTokens = { new EndOfLine(), new RegularCell(null, null),
+    IVisitable[] inputTokens = { new EndOfLine(), new RegularCell(null),
         new EndOfLine(), new EndOfLine() };
     Class[] expectedOutputTokens = {  EndOfLine.class, RegularCell.class, EndOfLine.class };
     actAndAssert(inputTokens, expectedOutputTokens);
@@ -24,7 +24,7 @@ public class TokensTest {
   
   @Test
   public void testOneTrailingEndOfLineIsNotTouched() {
-    IVisitable[] inputTokens = { new EndOfLine(), new RegularCell(null, null),
+    IVisitable[] inputTokens = { new EndOfLine(), new RegularCell(null),
         new EndOfLine()};
     Class[] expectedOutputTokens = {  EndOfLine.class, RegularCell.class, EndOfLine.class };
     actAndAssert(inputTokens, expectedOutputTokens);
@@ -32,7 +32,7 @@ public class TokensTest {
   
   @Test
   public void testNoTrailingEndOfLinesArePurged() {
-    IVisitable[] inputTokens = {new RegularCell(null, null) };
+    IVisitable[] inputTokens = {new RegularCell(null) };
     Class[] expectedOutputTokens = { RegularCell.class };
     actAndAssert(inputTokens, expectedOutputTokens);
   }

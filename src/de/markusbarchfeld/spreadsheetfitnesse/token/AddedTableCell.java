@@ -5,7 +5,7 @@ public class AddedTableCell extends TableCell {
   private String content;
 
   public AddedTableCell(String content) {
-    super(null, null);
+    super(null);
     this.content = content;
   }
 

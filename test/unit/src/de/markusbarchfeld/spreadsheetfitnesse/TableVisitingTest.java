@@ -18,9 +18,9 @@ public class TableVisitingTest {
   public void testTableVisiting() throws Exception {
     // make sure that the visitTableCell and visitTableRow
     // methods are called while a table is being visited
-    TableCell tableCell1 = new TableCell(null, null);
-    TableCell tableCell2 = new TableCell(null, null);
-    TableCell tableCell3 = new TableCell(null, null);
+    TableCell tableCell1 = new TableCell(null);
+    TableCell tableCell2 = new TableCell(null);
+    TableCell tableCell3 = new TableCell(null);
 
     Table table = new Table();
     table.add(tableCell1);

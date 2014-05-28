@@ -1,24 +1,28 @@
 package de.markusbarchfeld.spreadsheetfitnesse.token;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import util.StringUtil;
 
 public class Tokens implements IVisitable {
 
-  private static List<IVisitable>  removeSuperfluousTrailingEndOfLines(
+  private static List<IVisitable> removeSuperfluousTrailingEndOfLines(
       List<IVisitable> tokens) {
-    int startingElementsNotEndOfLine ;
+    int startingElementsNotEndOfLine;
     for (startingElementsNotEndOfLine = tokens.size() - 1; startingElementsNotEndOfLine >= 0; startingElementsNotEndOfLine--) {
       if (!(tokens.get(startingElementsNotEndOfLine) instanceof EndOfLine)) {
         break;
       }
     }
-    // only remove if there are more than one end of lines left. Always keep one.
+    // only remove if there are more than one end of lines left. Always keep
+    // one.
     if (startingElementsNotEndOfLine < tokens.size() - 2) {
-      return tokens.subList(0, startingElementsNotEndOfLine+2);
+      return tokens.subList(0, startingElementsNotEndOfLine + 2);
     } else {
       return tokens;
     }
-    
+
   }
 
   private List<IVisitable> tokens;
@@ -38,4 +42,12 @@ public class Tokens implements IVisitable {
     return tokens;
   }
 
+  @Override
+  public String toString() {
+    List<String> list = new ArrayList<String>();
+    for (IVisitable visible : tokens) {
+      list.add(visible.toString());
+    }
+    return StringUtil.join(list, ", ");
+  }
 }
