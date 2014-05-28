@@ -22,7 +22,7 @@ When spreadsheet-fitnesse finds a Sheet Call fixture, it
 
 In the Sheet Call fixture itself it adds a link to the subpage.
 
-When fitNesse runs the test the link is used to run the parameterized test and mark it as failed or passed.
+When FitNesse runs the test the link is used to run the parameterized test and mark it as failed or passed.
 
 ## Example
 
