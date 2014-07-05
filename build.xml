@@ -39,11 +39,11 @@
 	</target>
 
 	<target name="retrieve" depends="resolve" description="Copy dependencies to lib/, mainly for Acceptance tests and IDE's">
-		<ivy:retrieve pattern="${lib.dir}/[artifact]-[revision]-source.[ext]" conf="default,test" type="source" />
-		<ivy:retrieve pattern="${lib.dir}/[artifact]-[revision].[ext]" conf="default,test" type="jar" />
+		<ivy:retrieve pattern="${lib.dir}/[artifact]-[revision]-sources.[ext]" conf="default,test" type="source" />
+		<ivy:retrieve pattern="${lib.dir}/[artifact]-[revision]-sources.[ext]" conf="default,test" type="jar" />
 		<ivy:cachepath pathid="testlibs" conf="test" type="jar" />
 
-		<ivy:cachepath pathid="ivylibs" conf="default" type="jar" />
+		<ivy:cachepath pathid="ivylibs" conf="default" type="jar, source" />
 		<path id="libs">
 			<path refid="ivylibs" />
 			<pathelement path="${fitnesse-standalone-nightly.file}" />

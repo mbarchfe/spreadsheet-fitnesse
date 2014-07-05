@@ -14,8 +14,8 @@ import de.markusbarchfeld.spreadsheetfitnesse.sources.ISource;
 public class TokenGenerator {
 
   private static Log log = LogFactory.getLog(TokenGenerator.class);
-  private List<IVisitable> tokens = new ArrayList<IVisitable>();
-  private ISource source;
+  private List<IVisitable> tokens = null;
+  private final ISource source;
 
   public TokenGenerator(ISource source) {
     this.source = source;
@@ -27,6 +27,7 @@ public class TokenGenerator {
   }
 
   public void generateTokens() {
+    tokens = new ArrayList<IVisitable>();
     int lastIndex = -1;
     Iterator<IRow> rowIterator = this.source.getRowIterator();
     while (rowIterator.hasNext()) {
@@ -60,6 +61,17 @@ public class TokenGenerator {
       addToken(new EndOfLine());
     }
   }
+  
+  public Tokens filterTokens(Tokens tokens) {
+    // 1. clean up tokens
+    TransformerVisitor cleanUpVisitor = new RightOfTableCleanUpVisitor();
+    cleanUpVisitor.visit(tokens);
+    Tokens cleanedUpTokens = cleanUpVisitor.getTransformedTokens();
+    // 2. Generate Tables
+    CreateTableVisitor createTableVisitor = new CreateTableVisitor();
+    createTableVisitor.visit(cleanedUpTokens);
+    return createTableVisitor.getTransformedTokens(); 
+  }
 
   public void addToken(IVisitable visitable) {
     tokens.add(visitable);
@@ -67,6 +79,13 @@ public class TokenGenerator {
 
   public List<IVisitable> getTokens() {
     return tokens;
+  }
+  
+  public Tokens getFilteredTokens() {
+    if (tokens == null) {
+      this.generateTokens();
+    }
+    return filterTokens(new Tokens(tokens));
   }
 
 }
