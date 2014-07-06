@@ -38,10 +38,13 @@ public class PoiCell implements ICell {
   private Cell cell;
   private PoiSource poiSource;
 
-  public PoiCell(int columnNumber, Cell cell, PoiSource poiSource) {
+  private IRow row;
+
+  public PoiCell(IRow row, int columnNumber, Cell cell, PoiSource poiSource) {
     this.columnNumber = columnNumber;
     this.cell = cell;
     this.poiSource = poiSource;
+    this.row = row;
   }
 
   @Override
@@ -169,6 +172,11 @@ public class PoiCell implements ICell {
   public String toString() {
     return String.format("col: %d, content: %s, style: %s", this.columnNumber,
         this.getContent(), this.getStyle());
+  }
+
+  @Override
+  public IRow getRow() {
+    return row;
   }
 
 }

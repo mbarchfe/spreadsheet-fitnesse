@@ -1,6 +1,7 @@
 package de.markusbarchfeld.spreadsheetfitnesse.sources;
 
 import java.util.Iterator;
+import java.util.Map;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -87,6 +88,19 @@ public class UnoSourceTest {
           .assertEquals(
               "[[[\"fixtureName\"],[\"header1\",\"header2\"],[\"content1\",\"content2\"]]]",
               unoSource.toJSON());
+    }
+    
+    @Test
+    public void testStartingRowsOfFixtures() {
+      UNOSource unoSource = new UNOSource();
+      unoSource.add(1, 0, "fix1", "FitTableHeader");
+      unoSource.add(3, 0, "fix2", "FitTableHeader");
+      unoSource.add(4, 0, "header", "FitTableHeader");
+      
+      Map<Integer, Integer> fixtureToStartRow = unoSource.getFixtureToStartRow();
+      Assert.assertEquals(2, fixtureToStartRow.size());
+      Assert.assertEquals(Integer.valueOf(1), fixtureToStartRow.get(0));
+      Assert.assertEquals(Integer.valueOf(3), fixtureToStartRow.get(1));
     }
   
   

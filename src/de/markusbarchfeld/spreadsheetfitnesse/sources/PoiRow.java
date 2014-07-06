@@ -39,7 +39,7 @@ public class PoiRow implements IRow {
         while (result == null && colIndex <= row.getLastCellNum()) {
           Cell cell = row.getCell(colIndex);
           if (cell != null) {
-            result = new PoiCell(colIndex, cell, poiSource);
+            result = new PoiCell(PoiRow.this, colIndex, cell, poiSource);
           }
           colIndex += 1;
         };

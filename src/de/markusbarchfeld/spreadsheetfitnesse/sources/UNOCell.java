@@ -5,11 +5,13 @@ public class UNOCell implements ICell {
   private int column;
   private String content;
   private String style;
+  private IRow row;
 
-  public UNOCell(int column, String content, String style) {
+  public UNOCell(IRow row, int column, String content, String style) {
     this.column = column;
     this.content = content;
     this.style = style;
+    this.row = row;
   }
 
   @Override
@@ -30,5 +32,10 @@ public class UNOCell implements ICell {
   
   public String toString() {
     return "UNOCell: col=" + getColumnNumber() + ", content='" + getContent() + "', style=" + getStyle() ; 
+  }
+
+  @Override
+  public IRow getRow() {
+    return row;
   }
 }

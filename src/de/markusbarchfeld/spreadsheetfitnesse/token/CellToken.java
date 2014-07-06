@@ -14,6 +14,10 @@ public class CellToken {
     return cell.getContent();
   }
   
+  public ICell getCell() {
+    return cell;
+  }
+  
   @Override
   public String toString() {
     return this.getClass().getSimpleName() + ":" + getStringValue();
