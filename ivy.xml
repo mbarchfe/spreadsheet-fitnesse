@@ -20,8 +20,9 @@
 			<artifact name="poi" type="source" ext="jar" />
 		</dependency>
 		
-		
-		<dependency org="org.apache.poi" name="poi-ooxml" rev="3.10-FINAL" conf="default" >
+        <!-- not retrieving the dependencies of poi-ooxml because we need to replace the dependency to
+            poi-ooxml-schemas with ooxml-schemas (reason is the missing CTCellStyles type ) -->
+		<dependency org="org.apache.poi" name="poi-ooxml" rev="3.10-FINAL" conf="default" transitive="false" >
 			<artifact name="poi-ooxml" type="jar" />
 			<artifact name="poi-ooxml" type="source" ext="jar" />
 		</dependency>
@@ -30,6 +31,12 @@
 		<dependency org="org.apache.poi" name="ooxml-schemas" rev="1.1" conf="default" >
 			<artifact name="ooxml-schemas" type="jar" />
 			<artifact name="ooxml-schemas" type="source" ext="jar" />
+		</dependency>
+        
+        <!-- another dependency of poi-ooxml -->
+		<dependency org="dom4j" name="dom4j" rev="1.6.1" conf="default" >
+			<artifact name="dom4j" type="jar" />
+			<artifact name="dom4j" type="source" ext="jar" />
 		</dependency>
 		
 		<dependency org="org.apache.directory.studio" name="org.apache.commons.io" rev="2.4" conf="default">
