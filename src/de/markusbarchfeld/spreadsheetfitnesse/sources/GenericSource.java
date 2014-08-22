@@ -9,10 +9,9 @@ import de.markusbarchfeld.spreadsheetfitnesse.token.JSONCreationVisitor;
 import de.markusbarchfeld.spreadsheetfitnesse.token.TokenGenerator;
 import de.markusbarchfeld.spreadsheetfitnesse.token.Tokens;
 
-public class UNOSource implements ISource {
+public class GenericSource implements ISource {
 
   private TreeMap<Integer, IRow> map = new TreeMap<Integer, IRow>();
-  private Map<Integer, Integer> fixtureToStartRow;
   private Tokens tokens;
   public void add(int row, int column, String content) {
 
@@ -20,18 +19,18 @@ public class UNOSource implements ISource {
   }
 
   public void add(int row, int column, String content, String style) {
-    UNORow unoRow = getOrCreateRow(row);
-    UNOCell unoCell = new UNOCell(unoRow, column, content, style);
+    GenericRow unoRow = getOrCreateRow(row);
+    GenericCell unoCell = new GenericCell(unoRow, column, content, style);
     unoRow.add(unoCell);
   }
   
-  private UNORow getOrCreateRow(int row) {
+  private GenericRow getOrCreateRow(int row) {
     IRow result = map.get(row);
     if (result == null) {
-      result = new UNORow(row);
+      result = new GenericRow(row);
       map.put(row, result);
     }
-    return (UNORow) result;
+    return (GenericRow) result;
   }
 
   @Override

@@ -1,13 +1,13 @@
 package de.markusbarchfeld.spreadsheetfitnesse.sources;
 
-public class UNOCell implements ICell {
+public class GenericCell implements ICell {
 
   private int column;
   private String content;
   private String style;
   private IRow row;
 
-  public UNOCell(IRow row, int column, String content, String style) {
+  public GenericCell(IRow row, int column, String content, String style) {
     this.column = column;
     this.content = content;
     this.style = style;
@@ -31,7 +31,7 @@ public class UNOCell implements ICell {
 
   
   public String toString() {
-    return "UNOCell: col=" + getColumnNumber() + ", content='" + getContent() + "', style=" + getStyle() ; 
+    return "GenericCell: col=" + getColumnNumber() + ", content='" + getContent() + "', style=" + getStyle() ; 
   }
 
   @Override

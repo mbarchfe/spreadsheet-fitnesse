@@ -6,12 +6,12 @@ import java.util.Map;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class UnoSourceTest {
+public class GenericSourceTest {
 
   @Test
   public void testOneRowOneCell() {
     // simplest case, check that content and style are available in the cell
-    UNOSource unoSource = new UNOSource();
+    GenericSource unoSource = new GenericSource();
     String content = "fixturename";
     String styleName = "FitTableCell";
     unoSource.add(0, 0, content, styleName);
@@ -30,7 +30,7 @@ public class UnoSourceTest {
   @Test
   public void testTwoRowsInReverseOrder() {
     // row iteration does not depend on the input order
-    UNOSource unoSource = new UNOSource();
+    GenericSource unoSource = new GenericSource();
     unoSource.add(1, 0, "c");
     unoSource.add(0, 0, "c");
     Iterator<IRow> rowIterator = unoSource.getRowIterator();
@@ -46,7 +46,7 @@ public class UnoSourceTest {
   @Test
   public void testTwoCellsInReverseOrder() {
     // cell iteration does not depend on the input order
-    UNOSource unoSource = new UNOSource();
+    GenericSource unoSource = new GenericSource();
     unoSource.add(5, 2, "c");
     unoSource.add(5, 0, "c");
     Iterator<IRow> rowIterator = unoSource.getRowIterator();
@@ -59,7 +59,7 @@ public class UnoSourceTest {
   @Test
   public void testCellAddedTwice() {
     // if a cell is added twice, the second add overwrites the first
-    UNOSource unoSource = new UNOSource();
+    GenericSource unoSource = new GenericSource();
     unoSource.add(1, 2, "a");
     unoSource.add(1, 2, "b");
     Iterator<IRow> rowIterator = unoSource.getRowIterator();
@@ -77,7 +77,7 @@ public class UnoSourceTest {
    */
     @Test
     public void testToJson() {
-      UNOSource unoSource = new UNOSource();
+      GenericSource unoSource = new GenericSource();
       unoSource.add(1, 0, "fixtureName", "FitTableHeader");
       unoSource.add(2, 1, "header1", "FitTableHeader");
       unoSource.add(3, 1, "content1", "FitTableCell");
@@ -92,7 +92,7 @@ public class UnoSourceTest {
     
     @Test
     public void testStartingRowsOfFixtures() {
-      UNOSource unoSource = new UNOSource();
+      GenericSource unoSource = new GenericSource();
       unoSource.add(1, 0, "fix1", "FitTableHeader");
       unoSource.add(3, 0, "fix2", "FitTableHeader");
       unoSource.add(4, 0, "header", "FitTableHeader");

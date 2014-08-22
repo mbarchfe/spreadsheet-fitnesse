@@ -3,12 +3,12 @@ package de.markusbarchfeld.spreadsheetfitnesse.sources;
 import java.util.Iterator;
 import java.util.TreeMap;
 
-public class UNORow implements IRow, Comparable<UNORow> {
+public class GenericRow implements IRow, Comparable<GenericRow> {
 
   private Integer rowNumber;
   private TreeMap<Integer, ICell> map = new TreeMap<Integer, ICell>();
 
-  public UNORow(int rowNumber) {
+  public GenericRow(int rowNumber) {
     this.rowNumber = rowNumber;
   }
 
@@ -22,12 +22,12 @@ public class UNORow implements IRow, Comparable<UNORow> {
     return map.values().iterator();
   }
 
-  public void add(UNOCell unoCell) {
+  public void add(GenericCell unoCell) {
     map.put(unoCell.getColumnNumber(), unoCell);
   }
 
   @Override
-  public int compareTo(UNORow o) {
+  public int compareTo(GenericRow o) {
     return rowNumber.compareTo(o.rowNumber);
   }
 
